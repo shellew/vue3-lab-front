@@ -16,6 +16,14 @@ const items = ref([
     {
         title: 'マイブック4',
         image: '/images/item4.jpg'
+    },
+    {
+        title: 'マイブック3',
+        image: '/images/item3.jpg'
+    },
+    {
+        title: 'マイブック3',
+        image: '/images/item3.jpg'
     }
 ])
 </script>
@@ -58,7 +66,6 @@ const items = ref([
         display: flex;
         flex-wrap: wrap;
         width: 100%;
-        background-color: aquamarine;
     }
 
     .item {

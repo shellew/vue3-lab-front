@@ -1,15 +1,14 @@
-<template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
-</template>
+<script setup>
+import Sidebar from '../components/contents/Sidebar.vue'
+import InfoInput from '../components/contents/items/InfoInput.vue';
+</script>
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>
+<template>
+  <main>
+    <Sidebar />
+    <div class="register-container">
+      <label for="" name="タイトル">タイトル</label>
+      <InfoInput />
+    </div>
+  </main>
+</template>
