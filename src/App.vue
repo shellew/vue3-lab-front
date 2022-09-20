@@ -1,5 +1,37 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+import axios from 'axios'
+import { ref, onMounted } from 'vue'
+
+  const message = ref('Hello Axios')
+  onMounted(() => {
+      axios
+        .get('https://jsonplaceholder.typicode.com/users')
+        .then((response) => console.log(response))
+        .catch((error) => console.log(error));
+    });
+
+
+  // function onMounted(async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         'https://jsonplaceholder.typicode.com/users'
+  //       );
+  //       console.log(response.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  // });
+
+
+// テスト
+// const message = 'Hello Vue!'
+
+// function log() {
+//   console.log(message)
+// }
+
+// log();
 
 </script>
 
@@ -13,10 +45,13 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink to="/list">List</RouterLink>
         <RouterLink to="/edit">Edit</RouterLink>
       </nav>
+      <h1>{{ message }}</h1>
     </div>
   </header>
+  
   <RouterView />
 </template>
+
 
 <style scoped>
 header {
