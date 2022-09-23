@@ -1,9 +1,9 @@
 <template>
-    <el-input v-model="input" size="large" placeholder="入力してください" />
+  <el-input v-model="input" size="large" placeholder="入力してください" />
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 
-const input = ref('')
+const input = ref("");
 </script>

@@ -1,6 +1,6 @@
 <script setup>
-import Sidebar from '../components/contents/Sidebar.vue'
-import InfoInput from '../components/contents/items/InfoInput.vue';
+import Sidebar from "../components/contents/Sidebar.vue";
+import InfoInput from "../components/contents/items/InfoInput.vue";
 </script>
 
 <template>

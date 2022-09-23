@@ -2,8 +2,8 @@
     <el-input-number
       v-model="num"
       class="mx-4"
-      :min="1"
-      :max="10"
+      :min="0"
+      :max="999999"
       controls-position="right"
       @change="handleChange"
     />

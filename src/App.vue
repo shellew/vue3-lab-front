@@ -1,28 +1,29 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import axios from 'axios'
-import { ref, onMounted } from 'vue'
+import { RouterLink, RouterView } from "vue-router";
+import axios from "axios";
+import { ref, onMounted } from "vue";
 
-  const message = ref('Hello Axios');
-  // onMounted(() => {
-  //     axios
-  //       .get('http://localhost')
-  //       .then((response) => console.log(response))
-  //       .catch((error) => console.log(error));
-  //   });
+const message = ref("Hello Axios");
 
+// Axios test1
+// onMounted(() => {
+//     axios
+//       .get('http://localhost')
+//       .then((response) => console.log(response))
+//       .catch((error) => console.log(error));
+//   });
 
-  onMounted(async () => {
-      try {
-        const response = await axios.get(
-          'http://localhost/api/book_masters/5'
-        );
-        console.log(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-  });
-
+// Axios test2
+// onMounted(async () => {
+//   try {
+//     const response = await axios.get(
+// "http://localhost/api/book_masters/5"
+// );
+//     console.log(response.data);
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
 
 // テスト
 // const message = 'Hello Vue!'
@@ -32,7 +33,6 @@ import { ref, onMounted } from 'vue'
 // }
 
 // log();
-
 </script>
 
 <template>
@@ -48,7 +48,6 @@ import { ref, onMounted } from 'vue'
       <h1>{{ message }}</h1>
     </div>
   </header>
-  
   <RouterView />
 </template>
 

@@ -8,6 +8,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
-const textarea = ref('')
+import { ref } from "vue";
+const textarea = ref("");
 </script>
