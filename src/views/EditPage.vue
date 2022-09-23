@@ -55,8 +55,8 @@ import InputNumber from '../components/contents/items/InputNumber.vue';
     .edit-contents{
         width: 200px;
         text-align: center;
-        padding-top: 30px;
-        padding-right: 70px;
+        /* padding-top: 30px;
+        padding-right: 70px; */
         /* background-color: blanchedalmond; */
     }
 

@@ -3,25 +3,25 @@ import { RouterLink, RouterView } from 'vue-router'
 import axios from 'axios'
 import { ref, onMounted } from 'vue'
 
-  const message = ref('Hello Axios')
-  onMounted(() => {
-      axios
-        .get('https://jsonplaceholder.typicode.com/users')
-        .then((response) => console.log(response))
-        .catch((error) => console.log(error));
-    });
+  const message = ref('Hello Axios');
+  // onMounted(() => {
+  //     axios
+  //       .get('http://localhost')
+  //       .then((response) => console.log(response))
+  //       .catch((error) => console.log(error));
+  //   });
 
 
-  // function onMounted(async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         'https://jsonplaceholder.typicode.com/users'
-  //       );
-  //       console.log(response.data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  // });
+  onMounted(async () => {
+      try {
+        const response = await axios.get(
+          'http://localhost/api/book_masters/5'
+        );
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+  });
 
 
 // テスト
