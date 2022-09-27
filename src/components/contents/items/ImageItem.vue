@@ -1,42 +1,54 @@
 <script setup>
-import { ref } from "vue";
-const items = ref([
-  {
-    title: "マイブック",
-    image: "/images/item1.jpg",
-  },
-  {
-    title: "マイブック2",
-    image: "/images/item2.jpg",
-  },
-  {
-    title: "マイブック3",
-    image: "/images/item3.jpg",
-  },
-  {
-    title: "マイブック4",
-    image: "/images/item4.jpg",
-  },
-  {
-    title: "マイブック3",
-    image: "/images/item3.jpg",
-  },
-  {
-    title: "マイブック3",
-    image: "/images/item3.jpg",
-  },
-]);
+import { ref, reactive, onMounted } from "vue";
+import axios from "axios";
+
+// ①取得したデータを保存する変数booksを追加する
+// ②APIからデータを取得する
+// ③（booksからtitleを取り出して）タイトルをリストで表示する
+const books = ref([]);
+onMounted(() => {
+  axios.get("http://localhost/api/book_masters")
+    .then((response) => books.value = response.data)
+    .catch((error) => console.log(error))
+});
+
+
+  // {
+  //   bookTitle: "",
+  //   image: "/images/item1.jpg",
+  // },
+  // {
+  //   bookTitle: "",
+  //   image: "/images/item2.jpg",
+  // },
+  // {
+  //   bookTitle: "",
+  //   image: "/images/item3.jpg",
+  // },
+  // {
+  //   bookTitle: "",
+  //   image: "/images/item4.jpg",
+  // },
+  // {
+  //   bookTitle: "",
+  //   image: "/images/item3.jpg",
+  // },
+  // {
+  //   bookTitle: "",
+  //   image: "/images/item3.jpg",
+  // },
+
 </script>
 
 <template>
   <main class="main">
-    <template v-for="item in items">
+    <template v-for="book in books">
       <div class="item">
         <div class="thumbnail">
-          <img :src="item.image" alt="">
+          <img :src="book.image" alt="">
         </div>
         <div class="title">
-          <p>{{ item.title }}</p>
+          <p>{{ book.title }}</p>
         </div>
       </div>
     </template>
