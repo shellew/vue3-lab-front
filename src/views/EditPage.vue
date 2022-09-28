@@ -11,7 +11,7 @@ import { ref, reactive, onMounted } from "vue";
 // ②取得したデータを保存する変数booksを追加する
 const books = ref([]);
 onMounted(() => {
-  axios.get("http://localhost/api/book_masters")
+  axios.get("http://localhost/api/book_masters/1")
     .then((response) => books.value = response.data)
     .catch((error) => console.log(error));
 });
@@ -34,7 +34,9 @@ onMounted(() => {
           <div class="edit-block-item">
             <div class="edit-contents-item">
               <p class="edit-text">読書時間</p>
-              <InputNumber /><span>分</span>
+              <RouterLink to="/readtime">
+                <ButtonItem>記録する</ButtonItem>
+              </RouterLink>
             </div>
             <div class="edit-contents-item">
               <p>ステータス</p>
