@@ -3,15 +3,23 @@ import Sidebar from "../components/contents/Sidebar.vue";
 import CommentInputItem from "../components/contents/items/CommentInputItem.vue";
 import StatusOptionItem from "../components/contents/items/StatusOptionItem.vue";
 import ButtonItem from "../components/contents/items/ButtonItem.vue";
-import InputNumber from "../components/contents/items/InputNumber.vue";
 
 import axios from "axios";
 import { ref, reactive, onMounted } from "vue";
+
+const books = ref([]);
+
+const deleteBook = (id) => {
+  axios
+  .delete("http://localhost/api/book_masters/12")  //←idに固定の数字を入れれば動作する
+  .then((response) => console.log("delete book" + id.value))
+  .catch((error) => console.log(error));
+};
+
 // ①apiからデータを取得する
 // ②取得したデータを保存する変数booksを追加する
-const books = ref([]);
 onMounted(() => {
-  axios.get("http://localhost/api/book_masters/1")
+  axios.get("http://localhost/api/book_masters/12")
     .then((response) => books.value = response.data)
     .catch((error) => console.log(error));
 });
@@ -26,7 +34,6 @@ onMounted(() => {
         <img src="/images/item1.jpg" alt="" width="150">
         <p v-for="book in books">{{ book.title }}</p>
         <p v-for="book in books">{{ book.author }}</p>
-        <p v-for="book in books">{{ book.isbn }}</p>
         <p v-for="book in books">{{ book.status }}</p>
       </div>
       <div class="edit-blocks">
@@ -50,7 +57,7 @@ onMounted(() => {
             <ButtonItem>更新</ButtonItem>
           </div>
           <div class="button">
-            <ButtonItem>削除</ButtonItem>
+            <ButtonItem @click="deleteBook(books.id)">削除</ButtonItem>
           </div>
         </div>
       </div>

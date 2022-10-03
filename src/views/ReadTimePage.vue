@@ -51,7 +51,7 @@ onMounted(() => {
   </main>
 </template>
 
-<style> 
+<style>
 main {
   display: flex;
   font-size: 22px;

@@ -11,33 +11,6 @@ onMounted(() => {
     .then((response) => books.value = response.data)
     .catch((error) => console.log(error))
 });
-
-
-  // {
-  //   bookTitle: "",
-  //   image: "/images/item1.jpg",
-  // },
-  // {
-  //   bookTitle: "",
-  //   image: "/images/item2.jpg",
-  // },
-  // {
-  //   bookTitle: "",
-  //   image: "/images/item3.jpg",
-  // },
-  // {
-  //   bookTitle: "",
-  //   image: "/images/item4.jpg",
-  // },
-  // {
-  //   bookTitle: "",
-  //   image: "/images/item3.jpg",
-  // },
-  // {
-  //   bookTitle: "",
-  //   image: "/images/item3.jpg",
-  // },
-
 </script>
 
 <template>

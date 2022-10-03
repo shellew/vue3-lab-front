@@ -30,7 +30,6 @@
   .demo-date-picker {
     padding: 25px 0;
     text-align: center;
-    border-right: solid 1px var(--el-border-color);
     flex: 1;
   }
 
