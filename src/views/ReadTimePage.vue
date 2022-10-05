@@ -5,21 +5,28 @@ import EnterDate from "../components/contents/items/EnterDate.vue";
 import ButtonItem from "../components/contents/items/ButtonItem.vue";
 
 import axios from "axios";
-import { ref, reactive, onMounted } from "vue";
-
-// メモ
-// const createReadTime = () => {
-//   axios
-//   .post("http://localhost/api/read_times/"), {
-//     read_date: '',
-//     read_time: '',
-//   }
-//   .then((response) => )
-// }
+import { ref, onMounted } from "vue";
 
 const books = ref([]);
+const times = ref([]);
+let read_date = ref("");
+let read_minute = ref("");
+
+const createReadTime = () => {
+  axios
+    .post("http://localhost/api/read_times/", {
+      read_date: read_date.value,
+      read_minute: read_minute.value,
+      user_id: 5,
+      book_id: 5,
+    })
+    .then((response) => times.value(response.data))
+    .catch((error) => console.log(error));
+};
+
 onMounted(() => {
-  axios.get("http://localhost/api/book_masters/1")
+  axios
+    .get("http://localhost/api/book_masters/1")
     .then((response) => books.value = response.data)
     .catch((error) => console.log(error));
 });
@@ -30,18 +37,18 @@ onMounted(() => {
     <Sidebar />
     <div class="read-time-container">
       <h4>読書時間を入力</h4>
-      <p v-for="book in books">{{ book.title }}</p>
+      <p v-for="book in books">タイトル：{{ book.title }}</p>
       <div class="read-time-date">
         <p>読書日</p>
-        <EnterDate />
+        <EnterDate v-model="read_date" />
       </div>
       <div class="read-time-minute">
         <p class="">読書時間</p>
-        <InputNumber /><span>分</span>
+        <InputNumber v-model="read_minute" /><span>分</span>
       </div>
       <div class="read-time-btn">
         <div class="button">
-          <ButtonItem v-on="createReadTime">記録する</ButtonItem>
+          <ButtonItem @click="createReadTime()">記録する</ButtonItem>
         </div>
         <RouterLink to="/edit">
           <ButtonItem>戻る</ButtonItem>
@@ -58,7 +65,11 @@ main {
 }
 
 .read-time-container {
-  width: 100%;
+  width: 400px;
+  background-color: #e9e9eb;
+  padding-bottom: 40px;
+  padding-left: 150px;
+  box-shadow: 6px 6px 10px 2px rgb(230, 229, 227);
 }
 
 .read-time-date {
@@ -73,5 +84,6 @@ main {
   display: flex;
   justify-content: flex-start;
   margin-top: 50px;
+  margin: 50px auto 0;
 }
 </style>

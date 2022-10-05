@@ -5,21 +5,38 @@ import StatusOptionItem from "../components/contents/items/StatusOptionItem.vue"
 import ButtonItem from "../components/contents/items/ButtonItem.vue";
 
 import axios from "axios";
-import { ref, reactive, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 
 const books = ref([]);
+const status = ref("");
+const memo = ref("");
+
+const updateBook = () => {
+  axios
+    .put("http://localhost/api/book_masters/21", {  //←idに固定の数字を入れている
+      status: status.value,
+      memo: memo.value,
+    })
+    .then((response) => {
+      const book = books.value.find((book) => book.id === 21);
+      book.status = response.data.status;
+      book.memo = response.data.memo;
+    })
+    .catch((error) => console.log(error));
+};
 
 const deleteBook = (id) => {
   axios
-  .delete("http://localhost/api/book_masters/12")  //←idに固定の数字を入れれば動作する
-  .then((response) => console.log("delete book" + id.value))
-  .catch((error) => console.log(error));
+    .delete("http://localhost/api/book_masters/12")  //←idに固定の数字を入れている
+    .then((response) => console.log("delete book" + id.value))
+    .catch((error) => console.log(error));
 };
 
-// ①apiからデータを取得する
-// ②取得したデータを保存する変数booksを追加する
+// ①apiからデータを取得
+// ②取得したデータを保存する変数booksを追加
 onMounted(() => {
-  axios.get("http://localhost/api/book_masters/12")
+  axios
+    .get("http://localhost/api/book_masters/21")  //←idに固定の数字を入れている
     .then((response) => books.value = response.data)
     .catch((error) => console.log(error));
 });
@@ -32,9 +49,10 @@ onMounted(() => {
     <div class="edit-container">
       <div class="edit-contents">
         <img src="/images/item1.jpg" alt="" width="150">
-        <p v-for="book in books">{{ book.title }}</p>
-        <p v-for="book in books">{{ book.author }}</p>
-        <p v-for="book in books">{{ book.status }}</p>
+        <p v-for="book in books">タイトル：{{ book.title }}</p>
+        <p v-for="book in books">著者：{{ book.author }}</p>
+        <p v-for="book in books">ステータス：{{ book.status }}</p>
+        <p v-for="book in books">コメント<br>{{ book.memo }}</p>
       </div>
       <div class="edit-blocks">
         <div class="edit-block-items">
@@ -47,14 +65,15 @@ onMounted(() => {
             </div>
             <div class="edit-contents-item">
               <p>ステータス</p>
-              <StatusOptionItem />
+              <StatusOptionItem v-model="status" />
             </div>
           </div>
-          <label class="edit-text">コメント</label><CommentInputItem />
+          <label class="edit-text">コメント</label>
+          <CommentInputItem v-model="memo" />
         </div>
         <div class="button-item">
           <div class="button">
-            <ButtonItem>更新</ButtonItem>
+            <ButtonItem @click="updateBook()">更新</ButtonItem>
           </div>
           <div class="button">
             <ButtonItem @click="deleteBook(books.id)">削除</ButtonItem>

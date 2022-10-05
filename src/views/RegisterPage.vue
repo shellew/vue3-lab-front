@@ -1,19 +1,17 @@
 <script setup>
 import Sidebar from "../components/contents/Sidebar.vue";
 import InfoInput from "../components/contents/items/InfoInput.vue";
-// import InputNumber from "../components/contents/items/InputNumber.vue";
-// import InputIsbnNumber from "../components/contents/items/InputIsbnNumber.vue";
 import StatusOptionItem from "../components/contents/items/StatusOptionItem.vue";
 import CommentInputItem from "../components/contents/items/CommentInputItem.vue";
 import ButtonItem from "../components/contents/items/ButtonItem.vue";
 
-// ①inputに入力されたデータを"v-model"で取得する
-// ②保存するために定数books、（タイトル、著者、isbn、ステータス、コメント）の定数を定義する
-// →v-modelで取得した値を格納するkeyを設定する
-// ③ボタンにクリックイベントを設定する
+// ①inputに入力されたデータを"v-model"で取得
+// ②保存するために定数books、（タイトル、著者、ステータス、コメント）の定数を定義
+// →v-modelで取得した値を格納するkeyを設定
+// ③ボタンにクリックイベントを設定
 import axios from "axios";
-import { ref, reactive , onMounted } from "vue";
-const books = ref([]);  //②取得したデータを保存する定数books
+import { ref } from "vue";
+const books = ref([]);
 const user_id = ref("");
 const title = ref("");
 const author = ref("");
@@ -32,12 +30,6 @@ const createNewBook = () => {
   .then((response) => books.value(response.data))
   .catch((error) => console.log(error));
 };
-// onMounted(() => {
-//   axios
-//     .get("http://localhost/api/book_masters")
-//     .then((response) => books.value = response.data)
-//     .catch((error) => console.log(error));
-// });
 </script>
 
 <template>
@@ -47,24 +39,24 @@ const createNewBook = () => {
       <label name="userId" class="contents-item">ユーザーID*後に削除予定</label>
       <InfoInput v-model="user_id" />
 
-      <label name="title" class="contents-item">タイトル</label>
+      <label name="title" class="contents-item">
+        タイトル<span class="required">必須</span>
+      </label>
       <InfoInput v-model="title" />
 
       <label name="author" class="contents-item">著者</label>
       <InfoInput v-model="author" />
-      <!-- <div class="isbn-item">
-        <label name="isbn" class="contents-item">ISBN</label>
-        <InputIsbnNumber />ー<InputNumber />ー<InputNumber />ー<InputNumber />ー<InputNumber />
-      </div> -->
 
-      <label name="status" class="contents-item">ステータス</label>
+      <label name="status" class="contents-item">
+        ステータス<span class="required">必須</span>
+      </label>
       <StatusOptionItem v-model="status" />
+
       <label name="comment" class="contents-item">コメント</label>
       <CommentInputItem v-model="memo" />
+
       <div class="btn-container">
-        <div class="btn">
-          <ButtonItem @click="createNewBook()" />
-        </div>
+        <ButtonItem @click="createNewBook()" />
       </div>
     </div>
   </main>
@@ -93,5 +85,14 @@ main {
   display: flex;
   justify-content: center;
   margin-top: 25px;
+}
+
+.required {
+  padding: 3px 5px;
+  margin: 0 0 10px 7px;
+  background-color: #F56C6C;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 2px;
 }
 </style>

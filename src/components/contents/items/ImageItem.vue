@@ -1,22 +1,22 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 
-// ①取得したデータを保存する変数booksを追加する
-// ②APIからデータを取得する
-// ③（booksからtitleを取り出して）タイトルをリストで表示する
+// ①取得したデータを保存する変数booksを設定
+// ②APIからデータを取得
+// ③タイトルをリストで表示
 const books = ref([]);
 onMounted(() => {
   axios.get("http://localhost/api/book_masters")
     .then((response) => books.value = response.data)
-    .catch((error) => console.log(error))
+    .catch((error) => console.log(error));
 });
 </script>
 
 <template>
   <main class="main">
     <template v-for="book in books">
-      <div class="item">
+      <div class="book-list">
         <div class="thumbnail">
           <img :src="book.image" alt="">
         </div>
@@ -43,27 +43,23 @@ body {
 }
 
 .main {
-  /* display: grid;
-    grid-template-columns: 3fr 3fr 3fr 3fr;
-    column-gap: 24px;
-    row-gap: 24px; */
   display: flex;
   flex-wrap: wrap;
   width: 100%;
 }
 
-.item {
+.book-list {
   width: 200px;
   padding: 10px;
   cursor: pointer;
 }
 
-.item:hover {
+.book-list:hover {
   transition: 0.2s transform ease-out;
   transform: scale(1.05);
 }
 
-.item > div.thumbnail > img {
+.book-list > div.thumbnail > img {
   display: flex;
   flex: wrap;
   width: 200px;
@@ -71,21 +67,8 @@ body {
   object-fit: cover;
 }
 
-.item > div.title {
+.book-list > div.title {
   text-align: center;
   margin-top: 20px;
 }
-
-/* .item > div.title > p {
-    margin-top: 0px;
-    margin-bottom: 0px;
-    font-size: 18px;
-    line-height: 25px;
-} */
-
-/* .item > div.title > span {
-    display: block;
-    margin-top: 10px;
-    font-size: 20px;
-} */
 </style>

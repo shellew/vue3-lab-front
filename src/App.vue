@@ -1,38 +1,7 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
-import axios from "axios";
-import { ref, onMounted } from "vue";
 
-const message = ref("Hello Axios");
-
-// Axios test1
-// onMounted(() => {
-//     axios
-//       .get('http://localhost')
-//       .then((response) => console.log(response))
-//       .catch((error) => console.log(error));
-//   });
-
-// Axios test2
-// onMounted(async () => {
-//   try {
-//     const response = await axios.get(
-// "http://localhost/api/book_masters/5"
-// );
-//     console.log(response.data);
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
-
-// テスト
-// const message = 'Hello Vue!'
-
-// function log() {
-//   console.log(message)
-// }
-
-// log();
+const message = "AppTitle";
 </script>
 
 <template>
@@ -50,7 +19,6 @@ const message = ref("Hello Axios");
   </header>
   <RouterView />
 </template>
-
 
 <style scoped>
 header {
@@ -89,21 +57,10 @@ nav a:first-of-type {
 }
 
 @media (min-width: 1024px) {
-  /* header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  } */
 
   .logo {
     margin: 0 2rem 0 0;
   }
-
-  /* header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  } */
 
   nav {
     text-align: left;

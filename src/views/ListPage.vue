@@ -2,14 +2,22 @@
 import Sidebar from "../components/contents/Sidebar.vue";
 import ImageItem from "../components/contents/items/ImageItem.vue";
 
-const status = "読んでる本";
+import axios from "axios";
+import { ref } from "vue";
+
+const books = ref([]);
+
+axios
+  .get("http://localhost/api/book_masters/")
+  .then((response) => books.value = response.data)
+  .catch((error) => console.log(error));
 </script>
 
 <template>
   <main>
     <Sidebar />
     <div class="list-container">
-      <h3>{{ status }}</h3>
+      <h3 v-for="book in books">{{ book.status }}</h3>
       <ImageItem />
     </div>
   </main>
