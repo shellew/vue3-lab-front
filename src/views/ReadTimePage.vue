@@ -3,24 +3,28 @@ import Sidebar from "../components/contents/Sidebar.vue";
 import InputNumber from "../components/contents/items/InputNumber.vue";
 import EnterDate from "../components/contents/items/EnterDate.vue";
 import ButtonItem from "../components/contents/items/ButtonItem.vue";
+import { ElNotification } from "element-plus";
 
 import axios from "axios";
 import { ref, onMounted } from "vue";
 
 const books = ref([]);
-const times = ref([]);
+
 let read_date = ref("");
-let read_minute = ref("");
+const read_minute = ref("");
+
+const date = new Date(read_date.value[0]);
+console.log(date.toString());
 
 const createReadTime = () => {
   axios
     .post("http://localhost/api/read_times/", {
-      read_date: read_date.value,
+      date: date.value.toString(),
       read_minute: read_minute.value,
       user_id: 5,
       book_id: 5,
     })
-    .then((response) => times.value(response.data))
+    .then((response) => console.log("log timedata"))
     .catch((error) => console.log(error));
 };
 
@@ -30,6 +34,20 @@ onMounted(() => {
     .then((response) => books.value = response.data)
     .catch((error) => console.log(error));
 });
+
+const open = () => {
+  ElNotification.success({
+    title: "通知",
+    message: "記録しました",
+    showClose: false,
+    duration: 4500,
+  });
+};
+
+const multipleHandlerTime = () => {
+  createReadTime();
+  open();
+};
 </script>
 
 <template>
@@ -48,7 +66,7 @@ onMounted(() => {
       </div>
       <div class="read-time-btn">
         <div class="button">
-          <ButtonItem @click="createReadTime()">記録する</ButtonItem>
+          <ButtonItem @click="multipleHandlerTime">記録する</ButtonItem>
         </div>
         <RouterLink to="/edit">
           <ButtonItem>戻る</ButtonItem>
@@ -66,10 +84,9 @@ main {
 
 .read-time-container {
   width: 400px;
-  background-color: #e9e9eb;
   padding-bottom: 40px;
   padding-left: 150px;
-  box-shadow: 6px 6px 10px 2px rgb(230, 229, 227);
+  box-shadow: 0 1rem 2rem hsl(0 0% 0% / 20%);
 }
 
 .read-time-date {

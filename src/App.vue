@@ -10,6 +10,7 @@ const message = "AppTitle";
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/login">Login</RouterLink>
         <RouterLink to="/register">Register</RouterLink>
         <RouterLink to="/list">List</RouterLink>
         <RouterLink to="/edit">Edit</RouterLink>
@@ -57,7 +58,6 @@ nav a:first-of-type {
 }
 
 @media (min-width: 1024px) {
-
   .logo {
     margin: 0 2rem 0 0;
   }

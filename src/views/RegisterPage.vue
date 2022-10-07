@@ -4,6 +4,7 @@ import InfoInput from "../components/contents/items/InfoInput.vue";
 import StatusOptionItem from "../components/contents/items/StatusOptionItem.vue";
 import CommentInputItem from "../components/contents/items/CommentInputItem.vue";
 import ButtonItem from "../components/contents/items/ButtonItem.vue";
+import { ElNotification } from "element-plus";
 
 // ①inputに入力されたデータを"v-model"で取得
 // ②保存するために定数books、（タイトル、著者、ステータス、コメント）の定数を定義
@@ -20,15 +21,29 @@ const memo = ref("");
 
 const createNewBook = () => {
   axios
-  .post("http://localhost/api/book_masters", {
-    user_id: user_id.value,
-    title: title.value,
-    author: author.value,
-    status: status.value,
-    memo: memo.value,
-  })
-  .then((response) => books.value(response.data))
-  .catch((error) => console.log(error));
+    .post("http://localhost/api/book_masters", {
+      user_id: user_id.value,
+      title: title.value,
+      author: author.value,
+      status: status.value,
+      memo: memo.value,
+    })
+    .then((response) => books.value(response.data))
+    .catch((error) => console.log(error));
+};
+
+const open = () => {
+  ElNotification.success({
+    title: "通知",
+    message: "新しい本を登録しました",
+    showClose: false,
+    duration: 4500,
+  });
+};
+
+const multipleHandlerRegister = () => {
+  createNewBook();
+  open();
 };
 </script>
 
@@ -56,7 +71,7 @@ const createNewBook = () => {
       <CommentInputItem v-model="memo" />
 
       <div class="btn-container">
-        <ButtonItem @click="createNewBook()" />
+        <ButtonItem @click="multipleHandlerRegister" />
       </div>
     </div>
   </main>

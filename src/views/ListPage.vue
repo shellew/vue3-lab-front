@@ -16,10 +16,12 @@ axios
 <template>
   <main>
     <Sidebar />
-    <div class="list-container">
-      <h3 v-for="book in books">{{ book.status }}</h3>
-      <ImageItem />
-    </div>
+    <RouterLink to="/edit">
+      <div class="list-container">
+        <h3 v-for="book in books">{{ book.status }}</h3>
+        <ImageItem />
+      </div>
+    </RouterLink>
   </main>
 </template>
 
