@@ -7,7 +7,7 @@
       :value="item.value"
     />
   </el-select>
-</template> 
+</template>
 
 <script lang="ts" setup>
 import { ref } from "vue";

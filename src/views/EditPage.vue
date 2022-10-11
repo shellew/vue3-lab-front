@@ -1,5 +1,5 @@
 <script setup>
-import Sidebar from "../components/contents/Sidebar.vue";
+import HomeSidebar from "../components/contents/HomeSidebar.vue";
 import CommentInputItem from "../components/contents/items/CommentInputItem.vue";
 import StatusOptionItem from "../components/contents/items/StatusOptionItem.vue";
 import ButtonItem from "../components/contents/items/ButtonItem.vue";
@@ -17,9 +17,10 @@ const memo = ref("");
 
 const updateBook = () => {
   axios
-    .put("http://localhost/api/book_masters/15", { //←idに固定の数字を入れている
+    .put("http://localhost/api/book_masters/15", {
+      //←idに固定の数字を入れている
       title: title.value,
-      author: author.value, 
+      author: author.value,
       status: status.value,
       memo: memo.value,
     })
@@ -35,8 +36,8 @@ const updateBook = () => {
 
 const deleteBook = (id) => {
   axios
-    .delete("http://localhost/api/book_masters/29")  //←idに固定の数字を入れている
-    .then((response) => console.log("delete book" + id.value))
+    .delete("http://localhost/api/book_masters/29") //←idに固定の数字を入れている
+    .then(() => console.log("delete book" + id.value))
     .catch((error) => console.log(error));
 };
 
@@ -44,8 +45,8 @@ const deleteBook = (id) => {
 // ②取得したデータを保存する変数booksを追加
 onMounted(() => {
   axios
-    .get("http://localhost/api/book_masters/15")  //←idに固定の数字を入れている
-    .then((response) => books.value = response.data)
+    .get("http://localhost/api/book_masters/15") //←idに固定の数字を入れている
+    .then((response) => (books.value = response.data))
     .catch((error) => console.log(error));
 });
 
@@ -76,20 +77,25 @@ const multipleHandlerDelete = () => {
   deleteBook();
   openDelete();
 };
-
 </script>
 
 <template>
   <main>
-    <Sidebar />
+    <HomeSidebar />
 
     <div class="edit-container">
       <div class="edit-contents">
-        <img src="/images/item1.jpg" alt="" width="150">
-        <p v-for="book in books">タイトル：{{ book.title }}</p>
-        <p v-for="book in books">著者：{{ book.author }}</p>
-        <p v-for="book in books">ステータス：{{ book.status }}</p>
-        <p v-for="book in books">コメント<br>{{ book.memo }}</p>
+        <img src="/images/item1.jpg" alt="" width="150" />
+        <p v-for="(book, key) in books" :key="key">
+          タイトル：{{ book.title }}
+        </p>
+        <p v-for="book in books" :key="book.author">著者：{{ book.author }}</p>
+        <p v-for="book in books" :key="book.status">
+          ステータス：{{ book.status }}
+        </p>
+        <p v-for="book in books" :key="book.memo">
+          コメント<br />{{ book.memo }}
+        </p>
       </div>
       <div class="edit-blocks">
         <div class="edit-block-items">

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import type { FormInstance } from 'element-plus'
+import axios from 'axios'
 
 const ruleFormRef = ref<FormInstance>()
 const validatePassUserName = (rule: any, value: any, callback: any) => {
@@ -50,23 +51,31 @@ const rules = reactive({
     mailAddress: [{ validator: validatePassMailAddress, trigger: 'blur' }],
     password: [{ validator: validatePassPassword, trigger: 'blur' }],
 })
-
-const submitForm = (formEl: FormInstance | undefined) => {
-    if (!formEl) return
-    formEl.validate((valid) => {
-    if (valid) {
-        console.log('submit!')
-    } else {
-        console.log('error submit!')
-        return false
-    }
-    })
-}
-
+//リセット
 const resetForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.resetFields()
 }
+
+const createUser = () => {
+    axios
+    .post("http://localhost/api/user_masters", {
+        user_name: ruleForm.userName,
+        mail_address: ruleForm.mailAddress,
+        password: ruleForm.password,
+    })
+    .then(() => console.log("create user"))
+    .catch((error) => console.log(error));
+};
+
+const checkData = () => {
+    if(ruleForm.userName === "" || ruleForm.mailAddress === "" || ruleForm.password === "") {
+        alert("未入力の項目があります");
+        return false;
+    } else {
+        return createUser();
+    }
+};
 </script>
 
 <template>
@@ -74,19 +83,24 @@ const resetForm = (formEl: FormInstance | undefined) => {
     <div class="login-container">
         <h1>ログイン</h1>
         <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="120px" class="demo-ruleForm">
+
             <el-form-item label="ユーザー名" prop="userName">
               <el-input v-model="ruleForm.userName" type="text" autocomplete="off" />
             </el-form-item>
+
             <el-form-item label="メールアドレス" prop="mailAddress">
               <el-input v-model="ruleForm.mailAddress" type="email" autocomplete="off"/>
             </el-form-item>
+
             <el-form-item label="パスワード" prop="password">
               <el-input v-model="ruleForm.password" type="password" />
             </el-form-item>
+
             <el-form-item>
-              <el-button type="primary" @click="submitForm(ruleFormRef)">サインイン</el-button>
+              <el-button type="primary" @click="checkData">サインイン</el-button>
               <el-button @click="resetForm(ruleFormRef)">リセット</el-button>
             </el-form-item>
+
         </el-form>
     </div>
   </div>

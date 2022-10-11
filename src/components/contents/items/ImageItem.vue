@@ -7,18 +7,19 @@ import axios from "axios";
 // ③タイトルをリストで表示
 const books = ref([]);
 onMounted(() => {
-  axios.get("http://localhost/api/book_masters")
-    .then((response) => books.value = response.data)
+  axios
+    .get("http://localhost/api/book_masters")
+    .then((response) => (books.value = response.data))
     .catch((error) => console.log(error));
 });
 </script>
 
 <template>
   <main class="main">
-    <template v-for="book in books">
+    <template v-for="(book, key) in books" :key="key">
       <div class="book-list">
         <div class="thumbnail">
-          <img :src="book.image" alt="">
+          <img :src="book.image" alt="" />
         </div>
         <div class="title">
           <p>{{ book.title }}</p>

@@ -42,24 +42,19 @@
 </template>
 
 <script lang="ts" setup>
-import { RouterLink, RouterView } from 'vue-router'
-import {
-  Document,
-  Menu as IconMenu,
-  Location,
-  Setting,
-} from '@element-plus/icons-vue'
-const handleOpen = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
-const handleClose = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
+import { RouterLink } from "vue-router";
+import { Document, Menu as IconMenu, Setting } from "@element-plus/icons-vue";
+const handleOpen = (value) => {
+  console.log(value);
+};
+const handleClose = (value) => {
+  console.log(value);
+};
 </script>
 
 <style>
-  a{
-    color: #000;
-    text-decoration: none;
-  }
+a {
+  color: #000;
+  text-decoration: none;
+}
 </style>

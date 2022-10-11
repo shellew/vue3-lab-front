@@ -1,5 +1,5 @@
 <script setup>
-import Sidebar from "../components/contents/Sidebar.vue";
+import HomeSidebar from "../components/contents/HomeSidebar.vue";
 import InfoInput from "../components/contents/items/InfoInput.vue";
 import StatusOptionItem from "../components/contents/items/StatusOptionItem.vue";
 import CommentInputItem from "../components/contents/items/CommentInputItem.vue";
@@ -20,18 +20,16 @@ const memo = ref("");
 
 const createNewBook = () => {
   axios
-  .post("http://localhost/api/book_masters", {
-    user_id: user_id.value,
-    title: title.value,
-    author: author.value,
-    status: status.value,
-    memo: memo.value,
-  })
-  .then((response) => books.value(response.data))
-  .catch((error) => console.log(error));
+    .post("http://localhost/api/book_masters", {
+      user_id: user_id.value,
+      title: title.value,
+      author: author.value,
+      status: status.value,
+      memo: memo.value,
+    })
+    .then((response) => books.value(response.data))
+    .catch((error) => console.log(error));
 };
-
-
 
 // const displayMessageTitle = ref(false);
 // const displayMessageStatus = ref(false);
@@ -56,12 +54,11 @@ const createNewBook = () => {
 // const changeCheckButton = () => {
 //   return isCheckButton.value = !isCheckButton.value;
 // };
-
 </script>
 
 <template>
   <main>
-    <Sidebar />
+    <HomeSidebar />
     <div class="main-container">
       <label name="userId" class="contents-item">ユーザーID*後に削除予定</label>
       <InfoInput v-model="user_id" />
@@ -129,7 +126,7 @@ main {
 .required {
   padding: 3px 5px;
   margin: 0 0 10px 7px;
-  background-color: #F56C6C;
+  background-color: #f56c6c;
   color: #fff;
   font-size: 12px;
   border-radius: 2px;

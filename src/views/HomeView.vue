@@ -1,11 +1,11 @@
 <script setup>
 import WelcomeItem from "../components/WelcomeItem.vue";
-import Sidebar from "../components/contents/Sidebar.vue";
+import HomeSidebar from "../components/contents/HomeSidebar.vue";
 </script>
 
 <template>
   <main>
     <WelcomeItem />
-    <Sidebar />
+    <HomeSidebar />
   </main>
 </template>

@@ -1,5 +1,5 @@
 <script setup>
-import Sidebar from "../components/contents/Sidebar.vue";
+import HomeSidebar from "../components/contents/HomeSidebar.vue";
 import InputNumber from "../components/contents/items/InputNumber.vue";
 import EnterDate from "../components/contents/items/EnterDate.vue";
 import ButtonItem from "../components/contents/items/ButtonItem.vue";
@@ -8,30 +8,38 @@ import { ElNotification } from "element-plus";
 import axios from "axios";
 import { ref, onMounted } from "vue";
 
+
+//①子コンポーネント（EnterDate.vue）の値を受け取る
+//②受け取った値をdate型に変更する
+//③read_dateに代入する
+const changeDateTimeP = (element) => {
+  const date = new Date(element.value);
+  console.log("changeDateTimeP:" + date);
+  read_date.value = date.toDateString();
+  // const dateTypeChange = date.toISOString();
+  // console.log(dateTypeChange);
+};
+
 const books = ref([]);
-
-let read_date = ref("");
+const read_date = ref("");
 const read_minute = ref("");
-
-const date = new Date(read_date.value[0]);
-console.log(date.toString());
 
 const createReadTime = () => {
   axios
     .post("http://localhost/api/read_times/", {
-      date: date.value.toString(),
+      read_date: read_date.value,
       read_minute: read_minute.value,
       user_id: 5,
       book_id: 5,
     })
-    .then((response) => console.log("log timedata"))
+    .then((response) => console.log(response))
     .catch((error) => console.log(error));
 };
 
 onMounted(() => {
   axios
     .get("http://localhost/api/book_masters/1")
-    .then((response) => books.value = response.data)
+    .then((response) => (books.value = response.data))
     .catch((error) => console.log(error));
 });
 
@@ -52,13 +60,13 @@ const multipleHandlerTime = () => {
 
 <template>
   <main>
-    <Sidebar />
+    <HomeSidebar />
     <div class="read-time-container">
       <h4>読書時間を入力</h4>
-      <p v-for="book in books">タイトル：{{ book.title }}</p>
+      <p v-for="(book, key) in books" :key="key">タイトル：{{ book.title }}</p>
       <div class="read-time-date">
         <p>読書日</p>
-        <EnterDate v-model="read_date" />
+        <EnterDate v-model="read_date" @changeDateTime="changeDateTimeP" />
       </div>
       <div class="read-time-minute">
         <p class="">読書時間</p>

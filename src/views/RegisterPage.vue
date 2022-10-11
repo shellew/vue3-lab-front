@@ -1,5 +1,5 @@
 <script setup>
-import Sidebar from "../components/contents/Sidebar.vue";
+import HomeSidebar from "../components/contents/HomeSidebar.vue";
 import InfoInput from "../components/contents/items/InfoInput.vue";
 import StatusOptionItem from "../components/contents/items/StatusOptionItem.vue";
 import CommentInputItem from "../components/contents/items/CommentInputItem.vue";
@@ -45,11 +45,20 @@ const multipleHandlerRegister = () => {
   createNewBook();
   open();
 };
+
+const checkData = () => {
+  if(title.value === "" || status.value === ""){
+    alert("未入力の項目があります")
+    return false;
+  } else {
+    return multipleHandlerRegister();
+  }
+};
 </script>
 
 <template>
   <main>
-    <Sidebar />
+    <HomeSidebar />
     <div class="main-container">
       <label name="userId" class="contents-item">ユーザーID*後に削除予定</label>
       <InfoInput v-model="user_id" />
@@ -71,7 +80,7 @@ const multipleHandlerRegister = () => {
       <CommentInputItem v-model="memo" />
 
       <div class="btn-container">
-        <ButtonItem @click="multipleHandlerRegister" />
+        <ButtonItem @click="checkData" />
       </div>
     </div>
   </main>
@@ -105,7 +114,7 @@ main {
 .required {
   padding: 3px 5px;
   margin: 0 0 10px 7px;
-  background-color: #F56C6C;
+  background-color: #f56c6c;
   color: #fff;
   font-size: 12px;
   border-radius: 2px;
