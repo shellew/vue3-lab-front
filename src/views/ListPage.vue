@@ -9,19 +9,24 @@ const books = ref([]);
 
 axios
   .get("http://localhost/api/book_masters/")
-  .then((response) => (books.value = response.data))
+  .then(function(response) {
+    books.value = response.data;
+  })
   .catch((error) => console.log(error));
+
 </script>
 
 <template>
   <main>
     <HomeSidebar />
-    <RouterLink to="/edit">
-      <div class="list-container">
-        <h3 v-for="book in books" :key="book.status">{{ book.status }}</h3>
+    <div v-if="books" class="list-container">
+      <!-- <h3 v-for="book in books" :key="book.status">{{ book.status }}</h3> -->
+      <h3></h3>
+      <RouterLink to="/edit">
         <ImageItem />
-      </div>
-    </RouterLink>
+      </RouterLink>
+    </div>
+    <p v-else>本が登録されていません</p>
   </main>
 </template>
 

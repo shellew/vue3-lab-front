@@ -1,30 +1,27 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
-
-const message = "AppTitle";
+import { RouterView } from "vue-router";
 </script>
 
 <template>
   <header>
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/login">Login</RouterLink>
-        <RouterLink to="/register">Register</RouterLink>
-        <RouterLink to="/list">List</RouterLink>
-        <RouterLink to="/edit">Edit</RouterLink>
-      </nav>
-      <h1>{{ message }}</h1>
-    </div>
+    <RouterLink to="/login">サインイン</RouterLink>
+    <a href="#">サインアウト</a>
   </header>
+
   <RouterView />
 </template>
 
-<style scoped>
+<style>
 header {
-  line-height: 1.5;
-  max-height: 100vh;
+  text-align: right;
+  line-height: 50px;
+  height: 50px;
+  background-color: #555C64;
+}
+
+header a {
+  padding-right: 10px;
+  color: #fff;
 }
 
 .logo {
@@ -36,7 +33,6 @@ nav {
   width: 100%;
   font-size: 12px;
   text-align: center;
-  margin-top: 2rem;
 }
 
 nav a.router-link-exact-active {

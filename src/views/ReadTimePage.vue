@@ -8,20 +8,17 @@ import { ElNotification } from "element-plus";
 import axios from "axios";
 import { ref, onMounted } from "vue";
 
-
 //①子コンポーネント（EnterDate.vue）の値を受け取る
 //②受け取った値をdate型に変更する
 //③read_dateに代入する
 const changeDateTimeP = (element) => {
   const date = new Date(element.value);
   console.log("changeDateTimeP:" + date);
-  read_date.value = date.toDateString();
-  // const dateTypeChange = date.toISOString();
-  // console.log(dateTypeChange);
+  read_date.value = date;
 };
 
 const books = ref([]);
-const read_date = ref("");
+const read_date = ref(0);
 const read_minute = ref("");
 
 const createReadTime = () => {
@@ -29,8 +26,8 @@ const createReadTime = () => {
     .post("http://localhost/api/read_times/", {
       read_date: read_date.value,
       read_minute: read_minute.value,
-      user_id: 5,
-      book_id: 5,
+      user_id: 8,
+      book_id: 8,
     })
     .then((response) => console.log(response))
     .catch((error) => console.log(error));
@@ -38,7 +35,7 @@ const createReadTime = () => {
 
 onMounted(() => {
   axios
-    .get("http://localhost/api/book_masters/1")
+    .get("http://localhost/api/book_masters/8")
     .then((response) => (books.value = response.data))
     .catch((error) => console.log(error));
 });
@@ -94,6 +91,7 @@ main {
   width: 400px;
   padding-bottom: 40px;
   padding-left: 150px;
+  margin-left: 100px;
   box-shadow: 0 1rem 2rem hsl(0 0% 0% / 20%);
 }
 

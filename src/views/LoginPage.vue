@@ -109,7 +109,7 @@ const checkData = () => {
 <style>
 .login-container {
   width: 400px;
-  margin: 0 auto;
+  margin: 50px auto;
   padding: 50px;
   box-shadow: 0 1rem 2rem hsl(0 0% 0% / 20%);
   text-align: center;

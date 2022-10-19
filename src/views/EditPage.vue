@@ -50,6 +50,17 @@ onMounted(() => {
     .catch((error) => console.log(error));
 });
 
+const times = ref([]);
+
+onMounted(() => {
+  axios
+    .get("http://localhost/api/read_times/8") //←idに固定の数字を入れている
+    .then((response) => {
+      times.value.read_minute = response.data[0].totalTime;
+    })
+    .catch((error) => console.log(error));
+});
+
 const openUpdate = () => {
   ElNotification.success({
     title: "通知",
@@ -96,6 +107,7 @@ const multipleHandlerDelete = () => {
         <p v-for="book in books" :key="book.memo">
           コメント<br />{{ book.memo }}
         </p>
+        <p>読書時間：{{ times.read_minute }}分</p>
       </div>
       <div class="edit-blocks">
         <div class="edit-block-items">

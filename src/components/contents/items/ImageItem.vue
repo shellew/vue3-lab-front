@@ -37,12 +37,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-#app {
-  width: 90%;
-  margin: 0 5%;
-  color: #242424;
-}
-
 .main {
   display: flex;
   flex-wrap: wrap;
