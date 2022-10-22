@@ -1,129 +1,269 @@
-<!-- <script lang="ts" setup>
-import { reactive, ref } from 'vue'
-import type { FormInstance } from 'element-plus'
-import axios from 'axios'
+<script lang="ts" setup>
+import HomeSidebar from "../components/contents/HomeSidebar.vue";
+import CommentInputItem from "../components/contents/items/CommentInputItem.vue";
+import StatusOptionItem from "../components/contents/items/StatusOptionItem.vue";
+import ButtonItem from "../components/contents/items/ButtonItem.vue";
+import InfoInput from "../components/contents/items/InfoInput.vue";
+import { ElNotification } from "element-plus";
 
-const ruleFormRef = ref<FormInstance>()
-const validatePassUserName = (rule: any, value: any, callback: any) => {
-    if (value === '') {
-    callback(new Error('ユーザー名を入力してください'))
-    } else {
-    if (ruleForm.userName !== '') {
-        if (!ruleFormRef.value) return
-        ruleFormRef.value.validateField('checkPass', () => null)
-    }
-    callback()
-    }
-}
+import type { FormInstance } from 'element-plus';
 
-const validatePassMailAddress = (rule: any, value: any, callback: any) => {
-    if (value === '') {
-    callback(new Error('メールアドレスが正しくありません'))
-    } else {
-    if (ruleForm.mailAddress !== '') {
-        if (!ruleFormRef.value) return
-        ruleFormRef.value.validateField('checkPass', () => null)
-    }
-    callback()
-    }
-}
 
-const validatePassPassword = (rule: any, value: any, callback: any) => {
-    if (value === '') {
-    callback(new Error('パスワードが入力されていません'))
-    } else {
-    if (ruleForm.password !== '') {
-        if (!ruleFormRef.value) return
-        ruleFormRef.value.validateField('checkPass', () => null)
-    }
-    callback()
-    }
-}
 
-const ruleForm = reactive({
-    userName: '',
-    mailAddress: '',
-    password: '',
-})
+import axios from "axios";
+import { ref, onMounted, reactive } from "vue";
 
-const rules = reactive({
-    userName: [{ validator: validatePassUserName, trigger: 'blur' }],
-    mailAddress: [{ validator: validatePassMailAddress, trigger: 'blur' }],
-    password: [{ validator: validatePassPassword, trigger: 'blur' }],
-})
-//リセット
-const resetForm = (formEl: FormInstance | undefined) => {
-    if (!formEl) return
-    formEl.resetFields()
-}
+const books = ref([]);
+const title = ref("");
+const author = ref("");
+const status = ref("");
+const memo = ref("");
 
-const createUser = () => {
-    axios
-    .post("http://localhost/api/user_masters", {
-        user_name: ruleForm.userName,
-        mail_address: ruleForm.mailAddress,
-        password: ruleForm.password,
+const updateBook = () => {
+  axios
+    .put("http://localhost/api/book_masters/15", {
+      //←idに固定の数字を入れている
+      title: title.value,
+      author: author.value,
+      status: status.value,
+      memo: memo.value,
     })
-    .then(() => console.log("create user"))
+    .then((response) => {
+      const book = books.value;
+      book.title = response.data.title;
+      book.author = response.data.author;
+      book.status = response.data.status;
+      book.memo = response.data.memo;
+    })
     .catch((error) => console.log(error));
 };
 
-const checkData = () => {
-    if(ruleForm.userName === "" || ruleForm.mailAddress === "" || ruleForm.password === "") {
-        alert("未入力の項目があります");
-        return false;
-    } else {
-        return createUser();
-    }
+const deleteBook = (id) => {
+  axios
+    .delete("http://localhost/api/book_masters/29") //←idに固定の数字を入れている
+    .then(() => console.log("delete book" + id.value))
+    .catch((error) => console.log(error));
 };
 
-const doLogin() {
-  $store.value.dispatch("auth", {
-    userName: ruleForm.value.userName,
-    userPassword: ruleForm.value.password
+// ①apiからデータを取得
+// ②取得したデータを保存する変数booksを追加
+onMounted(() => {
+  axios
+    .get("http://localhost/api/book_masters/15") //←idに固定の数字を入れている
+    .then((response) => {
+      books.value = response.data;
+      title.value = books.value[0].title;
+      author.value = books.value[0].author;
+      status.value = books.value[0].status;
+      memo.value = books.value[0].memo;
+    })
+    .catch((error) => console.log(error));
+});
+
+const getBookTitle = title;
+const getBookAuthor = author;
+// const getBookStatus = status;
+// const getBookMemo = memo;
+
+const times = ref([]);
+
+onMounted(() => {
+  axios
+    .get("http://localhost/api/read_times/8") //←idに固定の数字を入れている
+    .then((response) => {
+      times.value.read_minute = response.data[0].totalTime;
+    })
+    .catch((error) => console.log(error));
+});
+
+const openUpdate = () => {
+  ElNotification.success({
+    title: "通知",
+    message: "更新しました",
+    showClose: false,
+    duration: 4500,
   });
-  this.$router.push(this.$route.query.redirect);
 };
+
+const openDelete = () => {
+  ElNotification.success({
+    title: "通知",
+    message: "削除しました",
+    showClose: false,
+    duration: 4500,
+  });
+};
+
+const multipleHandlerUpdate = () => {
+  updateBook();
+  openUpdate();
+};
+
+const multipleHandlerDelete = () => {
+  deleteBook();
+  openDelete();
+};
+
+
+//バリデーション
+const ruleFormRef = ref<FormInstance>()
+
+  const validatePass = (rule: any, value: any, callback: any) => {
+  if (value === "") {
+    callback(new Error("ステータスを入力してください"))
+  } else {
+    callback()
+  }
+}
+
+const ruleForm = reactive({
+  title: "",
+  author: "",
+  passBookStatus: "",
+  passBookMemo: "",
+})
+
+const rules = reactive({
+  title: [{ validator: validatePass, trigger: "blur"}],
+  author: [{ validator: validatePass, trigger: "blur"}],
+  passBookStatus: [{ validator: validatePass, trigger: "blur"}],
+  passBookMemo: [{ validator: validatePass, trigger: "blur"}],
+})
 </script>
 
 <template>
-  <div class="login-wrapper">
-    <div class="login-container">
-        <h1>ログイン</h1>
-        <el-form @submit.prevent="doLogin" ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="120px" class="demo-ruleForm">
+  <main>
+    <HomeSidebar />
 
-            <el-form-item label="ユーザー名" prop="userName">
-              <el-input v-model="ruleForm.userName" type="text" autocomplete="off" />
-            </el-form-item>
+    <div class="edit-container">
+      <div class="edit-contents">
+        <img src="/images/item1.jpg" alt="" width="150" />
+        <p v-for="(book, key) in books" :key="key">
+          タイトル：{{ book.title }}
+        </p>
+        <p v-for="book in books" :key="book.author">
+          著者：{{ book.author }}
+        </p>
+        <p v-for="book in books" :key="book.status">
+          ステータス：{{ book.status }}
+        </p>
+        <p v-for="book in books" :key="book.memo">
+          コメント<br />{{ book.memo }}
+        </p>
+        <p>読書時間：{{ times.read_minute }}分</p>
+      </div>
+      <div class="edit-blocks">
+        <div class="edit-block-items">
+          <div class="edit-block-item">
+            
+            <!-- <div class="edit-contents-item">
+              <p>子コンポーネントで値を表示</p>
+              <InfoInput :getBookTitle="getBookTitle" v-model="title" />
+            </div> -->
 
-            <el-form-item label="メールアドレス" prop="mailAddress">
-              <el-input v-model="ruleForm.mailAddress" type="email" autocomplete="off"/>
-            </el-form-item>
+            <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules">
+                <el-form-item label="タイトル" prop="passBookTitle">
+                  <InfoInput :getBookTitle="getBookTitle" v-model="ruleForm.title" />
+                </el-form-item>
 
-            <el-form-item label="パスワード" prop="password">
-              <el-input v-model="ruleForm.password" type="password" />
-            </el-form-item>
+                <el-form-item label="著者" prop="passBookAuthor">
+                  <InfoInput :getBookAuthor="getBookAuthor" v-model="ruleForm.author" />
+                </el-form-item>
 
-            <el-form-item>
-              <el-button type="primary" @click="checkData">サインイン</el-button>
-              <el-button @click="resetForm(ruleFormRef)">リセット</el-button>
-            </el-form-item>
+                <el-form-item label="ステータス" prop="passBookStatus">
+                  <StatusOptionItem v-model="status" />
+                </el-form-item>
 
-        </el-form>
+                <el-form-item label="メモ" prop="passBookMemo">
+                  <CommentInputItem v-model="memo" />
+                </el-form-item>
+            </el-form>
+
+            <!-- <div class="edit-contents-item">
+              <p>タイトル</p>
+              <InfoInput v-model="title" />
+            </div>
+            <div class="edit-contents-item">
+              <p>著者</p>
+              <InfoInput v-model="author" />
+            </div>
+            <div class="edit-contents-item">
+              <p>ステータス</p>
+              <StatusOptionItem v-model="status" />
+            </div> -->
+          </div>
+          <!-- <label class="edit-text">コメント</label>
+          <CommentInputItem v-model="memo" /> -->
+        </div>
+        <div class="button-item">
+          <div class="button">
+            <ButtonItem @click="multipleHandlerUpdate">更新</ButtonItem>
+          </div>
+          <div class="button">
+            <ButtonItem @click="multipleHandlerDelete">削除</ButtonItem>
+          </div>
+          <RouterLink to="/readtime">
+            <ButtonItem>読書時間を記録する</ButtonItem>
+          </RouterLink>
+        </div>
+      </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <style>
-.login-container {
-  width: 400px;
-  margin: 50px auto;
-  padding: 50px;
-  box-shadow: 0 1rem 2rem hsl(0 0% 0% / 20%);
+main {
+  display: flex;
+  font-size: 22px;
+}
+
+.edit-container {
+  display: flex;
+  justify-content: space-around;
+  width: 1000px;
+}
+
+.edit-contents {
+  width: 200px;
   text-align: center;
 }
 
-.login-container h1 {
-    padding-bottom: 20px;
+.edit-contents p {
+  font-size: 16px;
 }
-</style> -->
+
+.edit-blocks {
+  display: block;
+  width: 80%;
+  padding: 20px;
+}
+
+.edit-block-item {
+  display: block;
+}
+
+.edit-contents-item {
+  display: block;
+  margin-right: 100px;
+}
+/* 
+.edit-contents-item:first-of-type {
+  margin-right: 100px;
+} */
+
+.edit-text {
+  display: block;
+  margin: 20px 0 10px;
+  padding-bottom: 15px;
+}
+
+.button-item {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.button {
+  margin-right: 50px;
+}
+</style>

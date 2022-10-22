@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import HomeSidebar from "../components/contents/HomeSidebar.vue";
 import CommentInputItem from "../components/contents/items/CommentInputItem.vue";
 import StatusOptionItem from "../components/contents/items/StatusOptionItem.vue";
@@ -6,8 +6,12 @@ import ButtonItem from "../components/contents/items/ButtonItem.vue";
 import InfoInput from "../components/contents/items/InfoInput.vue";
 import { ElNotification } from "element-plus";
 
+import type { FormInstance } from 'element-plus';
+
+
+
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, reactive } from "vue";
 
 const books = ref([]);
 const title = ref("");
@@ -25,7 +29,7 @@ const updateBook = () => {
       memo: memo.value,
     })
     .then((response) => {
-      const book = books.value.find((book) => book.id === 21);
+      const book = books.value;
       book.title = response.data.title;
       book.author = response.data.author;
       book.status = response.data.status;
@@ -46,9 +50,20 @@ const deleteBook = (id) => {
 onMounted(() => {
   axios
     .get("http://localhost/api/book_masters/15") //←idに固定の数字を入れている
-    .then((response) => (books.value = response.data))
+    .then((response) => {
+      books.value = response.data;
+      title.value = books.value[0].title;
+      author.value = books.value[0].author;
+      status.value = books.value[0].status;
+      memo.value = books.value[0].memo;
+    })
     .catch((error) => console.log(error));
 });
+
+const getBookTitle = title;
+const getBookAuthor = author;
+// const getBookStatus = status;
+// const getBookMemo = memo;
 
 const times = ref([]);
 
@@ -88,6 +103,32 @@ const multipleHandlerDelete = () => {
   deleteBook();
   openDelete();
 };
+
+
+//バリデーション
+const ruleFormRef = ref<FormInstance>()
+
+  const validatePass = (rule: any, value: any, callback: any) => {
+  if (value === "") {
+    callback(new Error("ステータスを入力してください"))
+  } else {
+    callback()
+  }
+}
+
+const ruleForm = reactive({
+  passBookTitle: "",
+  passBookAuthor: "",
+  passBookStatus: "",
+  passBookMemo: "",
+})
+
+const rules = reactive({
+  passBookTitle: [{ validator: validatePass, trigger: "blur"}],
+  passBookAuthor: [{ validator: validatePass, trigger: "blur"}],
+  passBookStatus: [{ validator: validatePass, trigger: "blur"}],
+  passBookMemo: [{ validator: validatePass, trigger: "blur"}],
+})
 </script>
 
 <template>
@@ -100,7 +141,9 @@ const multipleHandlerDelete = () => {
         <p v-for="(book, key) in books" :key="key">
           タイトル：{{ book.title }}
         </p>
-        <p v-for="book in books" :key="book.author">著者：{{ book.author }}</p>
+        <p v-for="book in books" :key="book.author">
+          著者：{{ book.author }}
+        </p>
         <p v-for="book in books" :key="book.status">
           ステータス：{{ book.status }}
         </p>
@@ -112,7 +155,31 @@ const multipleHandlerDelete = () => {
       <div class="edit-blocks">
         <div class="edit-block-items">
           <div class="edit-block-item">
-            <div class="edit-contents-item">
+            
+            <!-- <div class="edit-contents-item">
+              <p>子コンポーネントで値を表示</p>
+              <InfoInput :getBookTitle="getBookTitle" v-model="title" />
+            </div> -->
+
+            <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules">
+                <el-form-item label="タイトル" prop="passBookTitle">
+                  <InfoInput :getBookTitle="getBookTitle" v-model="title" />
+                </el-form-item>
+
+                <el-form-item label="著者" prop="passBookAuthor">
+                  <InfoInput :getBookAuthor="getBookAuthor" v-model="author" />
+                </el-form-item>
+
+                <el-form-item label="ステータス" prop="passBookStatus">
+                  <StatusOptionItem v-model="status" />
+                </el-form-item>
+
+                <el-form-item label="メモ" prop="passBookMemo">
+                  <CommentInputItem v-model="memo" />
+                </el-form-item>
+            </el-form>
+
+            <!-- <div class="edit-contents-item">
               <p>タイトル</p>
               <InfoInput v-model="title" />
             </div>
@@ -123,10 +190,10 @@ const multipleHandlerDelete = () => {
             <div class="edit-contents-item">
               <p>ステータス</p>
               <StatusOptionItem v-model="status" />
-            </div>
+            </div> -->
           </div>
-          <label class="edit-text">コメント</label>
-          <CommentInputItem v-model="memo" />
+          <!-- <label class="edit-text">コメント</label>
+          <CommentInputItem v-model="memo" /> -->
         </div>
         <div class="button-item">
           <div class="button">
