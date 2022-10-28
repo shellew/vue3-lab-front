@@ -1,15 +1,12 @@
 <script lang="ts" setup>
-import HomeSidebar from "../components/contents/HomeSidebar.vue";
-import CommentInputItem from "../components/contents/items/CommentInputItem.vue";
-import StatusOptionItem from "../components/contents/items/StatusOptionItem.vue";
+// import HomeSidebar from "../components/contents/HomeSidebar.vue";
+// import CommentInputItem from "../components/contents/items/CommentInputItem.vue";
+// import StatusOptionItem from "../components/contents/items/StatusOptionItem.vue";
+// import InfoInput from "../components/contents/items/InfoInput.vue";
 import ButtonItem from "../components/contents/items/ButtonItem.vue";
-import InfoInput from "../components/contents/items/InfoInput.vue";
+
 import { ElNotification } from "element-plus";
-
-import type { FormInstance } from 'element-plus';
-
-
-
+import type { FormInstance, FormRules } from "element-plus";
 import axios from "axios";
 import { ref, onMounted, reactive } from "vue";
 
@@ -19,9 +16,30 @@ const author = ref("");
 const status = ref("");
 const memo = ref("");
 
-const updateBook = () => {
+//本のデータを取得
+onMounted(() => {
   axios
-    .put("http://localhost/api/book_masters/15", {
+    .get("http://localhost/api/book_masters/20") //←idに固定の数字を入れている
+    .then((response) => {
+      books.value = response.data;
+      title.value = books.value[0].title;
+      author.value = books.value[0].author;
+      status.value = books.value[0].status;
+      memo.value = books.value[0].memo;
+      console.log(response.data[0]);
+    })
+    .catch((error) => console.log(error));
+});
+
+//本のデータをデフォルトで表示
+const getBookTitle = title;
+const getBookAuthor = author;
+const getBookMemo = memo;
+
+//編集された情報を更新
+const updateBook = ():void => {
+  axios
+    .put("http://localhost/api/book_masters/20", {
       //←idに固定の数字を入れている
       title: title.value,
       author: author.value,
@@ -29,53 +47,12 @@ const updateBook = () => {
       memo: memo.value,
     })
     .then((response) => {
-      const book = books.value;
-      book.title = response.data.title;
-      book.author = response.data.author;
-      book.status = response.data.status;
-      book.memo = response.data.memo;
+      console.log(response);
     })
     .catch((error) => console.log(error));
 };
 
-const deleteBook = (id) => {
-  axios
-    .delete("http://localhost/api/book_masters/29") //←idに固定の数字を入れている
-    .then(() => console.log("delete book" + id.value))
-    .catch((error) => console.log(error));
-};
-
-// ①apiからデータを取得
-// ②取得したデータを保存する変数booksを追加
-onMounted(() => {
-  axios
-    .get("http://localhost/api/book_masters/15") //←idに固定の数字を入れている
-    .then((response) => {
-      books.value = response.data;
-      title.value = books.value[0].title;
-      author.value = books.value[0].author;
-      status.value = books.value[0].status;
-      memo.value = books.value[0].memo;
-    })
-    .catch((error) => console.log(error));
-});
-
-const getBookTitle = title;
-const getBookAuthor = author;
-// const getBookStatus = status;
-// const getBookMemo = memo;
-
-const times = ref([]);
-
-onMounted(() => {
-  axios
-    .get("http://localhost/api/read_times/8") //←idに固定の数字を入れている
-    .then((response) => {
-      times.value.read_minute = response.data[0].totalTime;
-    })
-    .catch((error) => console.log(error));
-});
-
+//更新情報を通知
 const openUpdate = () => {
   ElNotification.success({
     title: "通知",
@@ -85,6 +62,24 @@ const openUpdate = () => {
   });
 };
 
+const multipleHandlerUpdate = () => {
+  if (title.value && author.value && memo.value) {
+    updateBook();
+    openUpdate();
+  } else {
+    checkForm();
+  }
+};
+
+//本を削除
+const deleteBook = (id) => {
+  axios
+    .delete("http://localhost/api/book_masters/15") //←idに固定の数字を入れている
+    .then(() => console.log("delete book" + id.value))
+    .catch((error) => console.log(error));
+};
+
+//削除を通知
 const openDelete = () => {
   ElNotification.success({
     title: "通知",
@@ -94,41 +89,43 @@ const openDelete = () => {
   });
 };
 
-const multipleHandlerUpdate = () => {
-  updateBook();
-  openUpdate();
-};
-
 const multipleHandlerDelete = () => {
   deleteBook();
   openDelete();
 };
 
 
-//バリデーション
-const ruleFormRef = ref<FormInstance>()
+//読書時間を表示
+const times = ref(
+  {read_minute: ref([])}
+);
+onMounted(() => {
+  axios
+    .get("http://localhost/api/read_times/8") //←idに固定の数字を入れている
+    .then((response) => {
+      times.value.read_minute = response.data[0].totalTime;
+    })
+    .catch((error) => console.log(error));
+});
 
-  const validatePass = (rule: any, value: any, callback: any) => {
-  if (value === "") {
-    callback(new Error("ステータスを入力してください"))
-  } else {
-    callback()
+//バリデーションエラー
+const errors = ref([]);
+const checkForm = (e) => {
+  if(title.value && author.value && memo.value) {
+    return true
+  }
+  errors.value = [];
+
+  if(!title.value && blur) {
+    errors.value.push("タイトルを入力してください");
+  }
+  if(!author.value && blur) {
+    errors.value.push("著者を入力してください");
+  }
+  if(!memo.value && blur) {
+    errors.value.push("メモを入力してください");
   }
 }
-
-const ruleForm = reactive({
-  passBookTitle: "",
-  passBookAuthor: "",
-  passBookStatus: "",
-  passBookMemo: "",
-})
-
-const rules = reactive({
-  passBookTitle: [{ validator: validatePass, trigger: "blur"}],
-  passBookAuthor: [{ validator: validatePass, trigger: "blur"}],
-  passBookStatus: [{ validator: validatePass, trigger: "blur"}],
-  passBookMemo: [{ validator: validatePass, trigger: "blur"}],
-})
 </script>
 
 <template>
@@ -152,60 +149,51 @@ const rules = reactive({
         </p>
         <p>読書時間：{{ times.read_minute }}分</p>
       </div>
+      
       <div class="edit-blocks">
         <div class="edit-block-items">
           <div class="edit-block-item">
-            
-            <!-- <div class="edit-contents-item">
-              <p>子コンポーネントで値を表示</p>
-              <InfoInput :getBookTitle="getBookTitle" v-model="title" />
-            </div> -->
+            <el-form @click="checkForm">
+              <div v-if="errors.length">
+                <p v-for="(error, key) in errors" :key="key" class="error">{{ error }}</p>
+              </div>
+              <el-form-item prop="title">
+                <p>タイトル</p>
+                <InfoInput :getBookTitle="getBookTitle" v-model="title" /> 
+              </el-form-item>
 
-            <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules">
-                <el-form-item label="タイトル" prop="passBookTitle">
-                  <InfoInput :getBookTitle="getBookTitle" v-model="title" />
-                </el-form-item>
+              <el-form-item prop="author">
+                <p>著者</p>
+                <InfoInput :getBookAuthor="getBookAuthor" v-model="author" />
+              </el-form-item>
 
-                <el-form-item label="著者" prop="passBookAuthor">
-                  <InfoInput :getBookAuthor="getBookAuthor" v-model="author" />
-                </el-form-item>
+              <el-form-item prop="passBookStatus">
+                <p class="status">ステータス</p>
+                <StatusOptionItem v-model="status" />
+              </el-form-item>
 
-                <el-form-item label="ステータス" prop="passBookStatus">
-                  <StatusOptionItem v-model="status" />
-                </el-form-item>
+              <el-form-item prop="memo">
+                <p>メモ</p>
+                <CommentInputItem :getBookMemo="getBookMemo" v-model="memo" />
+              </el-form-item>
+              <div class="button-item">
+                <div class="button">
+                  <ButtonItem @click="multipleHandlerUpdate">更新</ButtonItem>
+                </div>
+                <div class="button">
+                  <ButtonItem @click="multipleHandlerDelete">削除</ButtonItem>
+                </div>
+                <RouterLink to="/readtime">
+                  <ButtonItem>読書時間を記録する</ButtonItem>
+                </RouterLink>
+              </div>
 
-                <el-form-item label="メモ" prop="passBookMemo">
-                  <CommentInputItem v-model="memo" />
-                </el-form-item>
             </el-form>
+          </div>
 
-            <!-- <div class="edit-contents-item">
-              <p>タイトル</p>
-              <InfoInput v-model="title" />
-            </div>
-            <div class="edit-contents-item">
-              <p>著者</p>
-              <InfoInput v-model="author" />
-            </div>
-            <div class="edit-contents-item">
-              <p>ステータス</p>
-              <StatusOptionItem v-model="status" />
-            </div> -->
-          </div>
-          <!-- <label class="edit-text">コメント</label>
-          <CommentInputItem v-model="memo" /> -->
+            
         </div>
-        <div class="button-item">
-          <div class="button">
-            <ButtonItem @click="multipleHandlerUpdate">更新</ButtonItem>
-          </div>
-          <div class="button">
-            <ButtonItem @click="multipleHandlerDelete">削除</ButtonItem>
-          </div>
-          <RouterLink to="/readtime">
-            <ButtonItem>読書時間を記録する</ButtonItem>
-          </RouterLink>
-        </div>
+
       </div>
     </div>
   </main>
@@ -265,5 +253,13 @@ main {
 
 .button {
   margin-right: 50px;
+}
+
+.error {
+  font-size: 16px;
+  color: #FAA0A0;
+  background-color: #FEEFF0;
+  border-radius: 5px;
+  padding: 5px 0 5px 15px;
 }
 </style>

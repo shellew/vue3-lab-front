@@ -24,22 +24,25 @@ const router = createRouter({
       path: "/register",
       name: "register",
       component: () => import("../views/RegisterPage.vue"),
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: false },
     },
     {
       path: "/list",
       name: "list",
       component: () => import("../views/ListPage.vue"),
+      meta: { requiresAuth: false },
     },
     {
       path: "/edit",
       name: "edit",
       component: () => import("../views/EditPage.vue"),
+      meta: { requiresAuth: false },
     },
     {
       path: "/readtime",
       name: "readtime",
       component: () => import("../views/ReadTimePage.vue"),
+      meta: { requiresAuth: false },
     },
     {
       path: "/login",
@@ -62,5 +65,13 @@ const router = createRouter({
 //     next();
 //   }
 // });
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    next({ path: "/login", query: { redirect: to.fullPath } });
+  } else {
+    next();
+  }
+});
 
 export default router;

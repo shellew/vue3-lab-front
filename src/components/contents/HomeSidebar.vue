@@ -14,7 +14,6 @@
             <span class="sidebar">ステータス</span>
           </template>
           <el-menu-item-group>
-
             <RouterLink to="/list" class="sidebar">
               <el-menu-item index="1-1">
                 <p>読書中</p>
@@ -38,7 +37,6 @@
                 <p>読みたい</p>
               </el-menu-item>
             </RouterLink>
-
           </el-menu-item-group>
         </el-sub-menu>
 
@@ -55,7 +53,6 @@
             <p>読書目標を設定</p>
           </el-menu-item>
         </a>
-
       </el-menu>
     </el-col>
   </el-aside>

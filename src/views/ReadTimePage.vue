@@ -8,6 +8,14 @@ import { ElNotification } from "element-plus";
 import axios from "axios";
 import { ref, onMounted } from "vue";
 
+//本の情報を取得
+onMounted(() => {
+  axios
+    .get("http://localhost/api/book_masters/8")
+    .then((response) => (books.value = response.data))
+    .catch((error) => console.log(error));
+});
+
 //①子コンポーネント（EnterDate.vue）の値を受け取る
 //②受け取った値をdate型に変更する
 //③read_dateに代入する
@@ -19,8 +27,9 @@ const changeDateTimeP = (element) => {
 
 const books = ref([]);
 const read_date = ref(0);
-const read_minute = ref("");
+const read_minute = ref(0);
 
+//読書時間を登録
 const createReadTime = () => {
   axios
     .post("http://localhost/api/read_times/", {
@@ -33,13 +42,7 @@ const createReadTime = () => {
     .catch((error) => console.log(error));
 };
 
-onMounted(() => {
-  axios
-    .get("http://localhost/api/book_masters/8")
-    .then((response) => (books.value = response.data))
-    .catch((error) => console.log(error));
-});
-
+//成功時通知
 const open = () => {
   ElNotification.success({
     title: "通知",
@@ -66,7 +69,7 @@ const multipleHandlerTime = () => {
         <EnterDate v-model="read_date" @changeDateTime="changeDateTimeP" />
       </div>
       <div class="read-time-minute">
-        <p class="">読書時間</p>
+        <p>読書時間</p>
         <InputNumber v-model="read_minute" /><span>分</span>
       </div>
       <div class="read-time-btn">

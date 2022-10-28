@@ -1,295 +1,262 @@
-<script setup lang="ts">
-import SampleButton from "../components/contents/items/SampleButton.vue";
-import SampleModal from "../components/contents/items/SampleModal.vue";
+<script lang="ts" setup>
+// import HomeSidebar from "../components/contents/HomeSidebar.vue";
+// import CommentInputItem from "../components/contents/items/CommentInputItem.vue";
+// import StatusOptionItem from "../components/contents/items/StatusOptionItem.vue";
+// import InfoInput from "../components/contents/items/InfoInput.vue";
+import ButtonItem from "../components/contents/items/ButtonItem.vue";
 
+import { ElNotification } from "element-plus";
+import type { FormInstance, FormRules } from "element-plus";
 import axios from "axios";
-import { ref } from "vue";
+import { ref, onMounted, reactive } from "vue";
 
-type fileType = {
-  defaultName: string;
-  previewImage: string | ArrayBuffer | null;
-  selectedFile: {
-    id: number;
-    fileId: string;
-    name: string;
-    image: string | ArrayBuffer | null;
-  }[];
+const books = ref([]);
+const title = ref("");
+const author = ref("");
+const status = ref("");
+const memo = ref("");
+
+//本のデータを取得
+onMounted(() => {
+  axios
+    .get("http://localhost/api/book_masters/20") //←idに固定の数字を入れている
+    .then((response) => {
+      books.value = response.data;
+      title.value = books.value[0].title;
+      author.value = books.value[0].author;
+      status.value = books.value[0].status;
+      memo.value = books.value[0].memo;
+      console.log(response.data[0]);
+    })
+    .catch((error) => console.log(error));
+});
+
+//本のデータをデフォルトで表示
+const getBookTitle = title;
+const getBookAuthor = author;
+const getBookMemo = memo;
+
+//編集された情報を更新
+const updateBook = ():void => {
+  axios
+    .put("http://localhost/api/book_masters/20", {
+      //←idに固定の数字を入れている
+      title: title.value,
+      author: author.value,
+      status: status.value,
+      memo: memo.value,
+    })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => console.log(error));
 };
-const fileValue = {
-  defaultName: "ファイルが選択されていません",
-  previewImage: "",
-  selectedFile: [
-    {
-      id: 0,
-      fileId: "file_input__0",
-      name: "ファイルが選択されていません",
-      image: null,
-    },
-    {
-      id: 1,
-      fileId: "file_input__1",
-      name: "ファイルが選択されていません",
-      image: null,
-    },
-  ],
+
+//更新情報を通知
+const openUpdate = () => {
+  ElNotification.success({
+    title: "通知",
+    message: "更新しました",
+    showClose: false,
+    duration: 4500,
+  });
 };
-const file = ref<fileType>(fileValue);
-const showModal = ref(false);
-//画像入れ込み
-const createImage = (image: File, _thisIndexNumber: number) => {
-  const reader = new FileReader();
-  reader.readAsDataURL(image);
-  reader.onload = () => {
-    file.value.selectedFile[_thisIndexNumber].name = image.name;
-    file.value.selectedFile[_thisIndexNumber].image = reader.result;
-  };
-};
-// 画像データ等取得
-const onImageUploaded = (e: Event) => {
-  if (e.target instanceof HTMLInputElement) {
-    if (e.target.files) {
-      const image = e.target.files[0];
-      const _thisId = e.target.id;
-      let _thisIndex = _thisId.split("__");
-      let _thisIndexNumber = Number(_thisIndex[1]);
-      createImage(image, _thisIndexNumber);
-    }
+
+const multipleHandlerUpdate = () => {
+  if (title.value && author.value && memo.value) {
+    updateBook();
+    openUpdate();
+  } else {
+    checkForm();
   }
 };
-//画像を削除
-const deleteImage = (e: Event) => {
-  e.preventDefault();
-  const _this = e.currentTarget as HTMLElement;
-  if (_this) {
-    const dataFileId = _this.getAttribute("data-fileId");
-    let _thisIndex;
-    if (dataFileId) {
-      _thisIndex = dataFileId.split("__");
-      let _thisIndexNumber = Number(_thisIndex[1]);
-      file.value.selectedFile[_thisIndexNumber].name = file.value.defaultName;
-      file.value.selectedFile[_thisIndexNumber].image = null;
-    }
+
+//本を削除
+const deleteBook = (id) => {
+  axios
+    .delete("http://localhost/api/book_masters/15") //←idに固定の数字を入れている
+    .then(() => console.log("delete book" + id.value))
+    .catch((error) => console.log(error));
+};
+
+//削除を通知
+const openDelete = () => {
+  ElNotification.success({
+    title: "通知",
+    message: "削除しました",
+    showClose: false,
+    duration: 4500,
+  });
+};
+
+const multipleHandlerDelete = () => {
+  deleteBook();
+  openDelete();
+};
+
+
+//読書時間を表示
+const times = ref(
+  {read_minute: ref([])}
+);
+onMounted(() => {
+  axios
+    .get("http://localhost/api/read_times/8") //←idに固定の数字を入れている
+    .then((response) => {
+      times.value.read_minute = response.data[0].totalTime;
+    })
+    .catch((error) => console.log(error));
+});
+
+//バリデーションエラー
+const errors = ref([]);
+const checkForm = (e) => {
+  if(title.value && author.value && memo.value) {
+    return true
   }
-};
-//画像を全て削除
-const deleatAllImages = (e: Event) => {
-  e.preventDefault();
-  const selectedFile = file.value.selectedFile;
-  for (let i = 0; i < selectedFile.length; i++) {
-    selectedFile[i].name = file.value.defaultName;
-    selectedFile[i].image = null;
+  errors.value = [];
+
+  if(!title.value && blur) {
+    errors.value.push("タイトルを入力してください");
   }
-  file.value.selectedFile = selectedFile;
-};
-//添付ファイルのセルを１つ追加
-const addFileIttem = (e: Event) => {
-  e.preventDefault();
-  let fileValue = file.value;
-  let selectedFile = fileValue.selectedFile;
-  const selectedFileLength = selectedFile.length;
-  const fileArray = {
-    id: selectedFileLength,
-    fileId: "file_input__" + selectedFileLength,
-    name: fileValue.defaultName,
-    image: null,
-  };
-  selectedFile.push(fileArray);
-  file.value.selectedFile = selectedFile;
-};
-//画像のプレビュー
-const previewImage = (e: Event) => {
-  e.preventDefault();
-  const _this = e.currentTarget as HTMLElement;
-  const dataFileId = _this.getAttribute("data-fileId");
-  if (dataFileId) {
-    let _thisIndex = dataFileId.split("__");
-    let _thisIndexNumber = Number(_thisIndex[1]);
-    file.value.previewImage = file.value.selectedFile[_thisIndexNumber].image;
+  if(!author.value && blur) {
+    errors.value.push("著者を入力してください");
   }
-  //画像が存在していたらモーダルあげる
-  if (file.value.previewImage) {
-    showModal.value = true;
+  if(!memo.value && blur) {
+    errors.value.push("メモを入力してください");
   }
-};
-const formSubmit = () => {
-  // 何か送信処理
-};
+}
 </script>
 
 <template>
   <main>
-    <div class="container">
-    <div class="form">
-      <div class="file-block">
-        <div class="file">
-          <div class="file-item" v-for="n in file.selectedFile" :key="n.id">
-            <div class="file-item-upload">
-              <div class="file-item-add-button">
-                <input
-                  type="file"
-                  :id="n.fileId"
-                  :name="n.fileId"
-                  class="file_input"
-                  @change="onImageUploaded"
-                />
-                <Button :data-fileId="n.fileId" :disabled="false">
-                  ファイルを選択
-                </Button>
-              </div>
-              <div class="file-item-name">
-                {{ n.name }}
-              </div>
-            </div>
-            <div class="file-item-info">
-              <div class="file-item-preview">
-                <Button
-                  :data-fileId="n.fileId"
-                  @click="previewImage"
-                  :disabled="!n.image"
-                >
-                  プレビュー
-                </Button>
-              </div>
-              <div class="file-item-delete">
-                <Button
-                  :data-fileId="n.fileId"
-                  @click="deleteImage"
-                  :disabled="!n.image"
-                >
-                  削除
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="file-control">
-          <Button
-            @click="addFileIttem"
-            :disabled="5 <= file.selectedFile.length"
-          >
-            ファイルの追加
-          </Button>
-          <Button
-            @click="deleatAllImages"
-            :disabled="!file.selectedFile.find((value) => value.image)"
-          >
-            すべて削除
-          </Button>
-        </div>
+    <HomeSidebar />
+
+    <div class="edit-container">
+      <div class="edit-contents">
+        <img src="/images/item1.jpg" alt="" width="150" />
+        <p v-for="(book, key) in books" :key="key">
+          タイトル：{{ book.title }}
+        </p>
+        <p v-for="book in books" :key="book.author">
+          著者：{{ book.author }}
+        </p>
+        <p v-for="book in books" :key="book.status">
+          ステータス：{{ book.status }}
+        </p>
+        <p v-for="book in books" :key="book.memo">
+          コメント<br />{{ book.memo }}
+        </p>
+        <p>読書時間：{{ times.read_minute }}分</p>
       </div>
-      <div class="button-block">
-        <Button
-          tag="button"
-          type="button"
-          :disabled="!file.selectedFile.find((value) => value.image)"
-          @click="formSubmit"
-        >
-          送信
-        </Button>
+      
+      <div class="edit-blocks">
+        <div class="edit-block-items">
+          <div class="edit-block-item">
+            <el-form @click="checkForm">
+              <div v-if="errors.length">
+                <p v-for="(error, key) in errors" :key="key" class="error">{{ error }}</p>
+              </div>
+              <el-form-item prop="title">
+                <p>タイトル</p>
+                <InfoInput :getBookTitle="getBookTitle" v-model="title" /> 
+              </el-form-item>
+
+              <el-form-item prop="author">
+                <p>著者</p>
+                <InfoInput :getBookAuthor="getBookAuthor" v-model="author" />
+              </el-form-item>
+
+              <el-form-item prop="passBookStatus">
+                <p class="status">ステータス</p>
+                <StatusOptionItem v-model="status" />
+              </el-form-item>
+
+              <el-form-item prop="memo">
+                <p>メモ</p>
+                <CommentInputItem :getBookMemo="getBookMemo" v-model="memo" />
+              </el-form-item>
+              <div class="button-item">
+                <div class="button">
+                  <ButtonItem @click="multipleHandlerUpdate">更新</ButtonItem>
+                </div>
+                <div class="button">
+                  <ButtonItem @click="multipleHandlerDelete">削除</ButtonItem>
+                </div>
+                <RouterLink to="/readtime">
+                  <ButtonItem>読書時間を記録する</ButtonItem>
+                </RouterLink>
+              </div>
+
+            </el-form>
+          </div>
+
+            
+        </div>
+
       </div>
     </div>
-  </div>
-  <!-- モーダル -->
-  <transition name="modal">
-    <Modal v-if="showModal" @close="showModal = false">
-      <template v-slot:content>
-        <div v-if="file.previewImage">
-          <img
-            :src="
-              typeof file.previewImage === 'string' ? file.previewImage : ''
-            "
-            alt=""
-          />
-        </div>
-      </template>
-    </Modal>
-  </transition>
-  <!-- モーダル -->
   </main>
 </template>
 
 <style>
 main {
   display: flex;
-}
-
-.main-container {
-  width: 50%;
-}
-
-.contents-item {
-  display: block;
-  margin: 20px 0 10px;
   font-size: 22px;
 }
 
-.select {
-  font-size: 14px;
+.edit-container {
+  display: flex;
+  justify-content: space-around;
+  width: 1000px;
 }
 
-.btn-container {
+.edit-contents {
+  width: 200px;
+  text-align: center;
+}
+
+.edit-contents p {
+  font-size: 16px;
+}
+
+.edit-blocks {
+  display: block;
+  width: 80%;
+  padding: 20px;
+}
+
+.edit-block-item {
+  display: block;
+}
+
+.edit-contents-item {
+  display: block;
+  margin-right: 100px;
+}
+/* 
+.edit-contents-item:first-of-type {
+  margin-right: 100px;
+} */
+
+.edit-text {
+  display: block;
+  margin: 20px 0 10px;
+  padding-bottom: 15px;
+}
+
+.button-item {
   display: flex;
   justify-content: center;
-  margin-top: 25px;
-}
-
-.required {
-  padding: 3px 5px;
-  margin: 0 0 10px 7px;
-  background-color: #f56c6c;
-  color: #fff;
-  font-size: 12px;
-  border-radius: 2px;
-}
-
-.form {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-}
-.file {
-  border-bottom: 1px solid #000;
-}
-.file-item {
-  width: 100%;
-  display: flex;
-  border-right: 1px solid #000;
-}
-.file-item > * {
-  width: 100%;
-  border-left: 1px solid #000;
-  border-top: 1px solid #000;
-  padding: 10px;
-}
-.file-control {
   margin-top: 20px;
 }
-.button-block {
-  margin-top: 20px;
+
+.button {
+  margin-right: 50px;
 }
-.file-item-add-button {
-  position: relative;
-}
-.file_input {
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
-  width: 120px;
-  height: 33px;
-  z-index: 2;
-}
-.file_input:hover + .button {
-  background: rgb(8, 122, 163);
-  color: #fff;
-}
-.file-item-delete {
-  margin-top: 10px;
-}
-.file-item-name {
-  margin-top: 10px;
-}
-.file-control .button + .button {
-  margin-left: 10px;
+
+.error {
+  font-size: 18px;
+  color: #ff7676;
 }
 </style>

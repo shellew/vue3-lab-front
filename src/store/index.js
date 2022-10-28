@@ -1,25 +1,14 @@
-// import Vue from "vue";
-// import Vuex from "vuex";
+import Vue from "vue";
+import Vuex from "vuex";
 
-// Vue.use(Vuex);
+Vue.use(Vuex);
 
-// const store = new Vuex.Store({
-//     state: {
-//         userName: "",
-//         userPassword: "",
-//     },
-//     mutations: {
-//         updateUser(state, user) {
-//             state.userName = user.userName;
-//             state.userPassword = user.userPassword;
-//         }
-//     },
-//     actions: {
-//         auth(context, user) {
-//             context.commit("updateUser", user)
-//         }
-//     },
-//     modules{},
-// });
+const store = new Vuex.Store({
+  state: {},
+  getters: {},
+  mutations: {},
+  actions: {},
+  modules: {},
+});
 
-// export default store
+export default store;

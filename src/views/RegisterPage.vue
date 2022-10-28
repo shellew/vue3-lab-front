@@ -19,6 +19,7 @@ const author = ref("");
 const status = ref("");
 const memo = ref("");
 
+//本の情報を登録
 const createNewBook = () => {
   axios
     .post("http://localhost/api/book_masters", {
@@ -28,10 +29,11 @@ const createNewBook = () => {
       status: status.value,
       memo: memo.value,
     })
-    .then((response) => books.value(response.data))
+    .then((response) => console.log(response))
     .catch((error) => console.log(error));
 };
 
+//成功時通知
 const open = () => {
   ElNotification.success({
     title: "通知",
@@ -46,9 +48,10 @@ const multipleHandlerRegister = () => {
   open();
 };
 
+//必須項目のチェック
 const checkData = () => {
-  if(title.value === "" || status.value === ""){
-    alert("未入力の項目があります")
+  if (title.value === "" || status.value === "") {
+    alert("未入力の項目があります");
     return false;
   } else {
     return multipleHandlerRegister();

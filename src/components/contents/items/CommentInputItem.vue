@@ -9,5 +9,7 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
+
 const textarea = ref("");
+defineProps(["getBookMemo"]);
 </script>

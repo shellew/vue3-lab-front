@@ -16,7 +16,7 @@ header {
   text-align: right;
   line-height: 50px;
   height: 50px;
-  background-color: #555C64;
+  background-color: #555c64;
 }
 
 header a {

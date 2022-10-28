@@ -8,15 +8,12 @@ import { ref, onMounted } from "vue";
 const books = ref([]);
 // let getBookStatus = ref();
 
+//本のデータを取得
 onMounted(() => {
   axios
     .get("http://localhost/api/book_masters/")
     .then((response) => {
       books.value = response.data;
-      console.log(books);
-      console.log(books.value);
-      console.log(books.value[0]);
-      console.log(books.value[0].status);
     })
     .catch((error) => console.log(error));
 });
